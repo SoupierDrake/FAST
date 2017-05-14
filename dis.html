@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>dis.html</title>
+<style>
+		.titular{border-bottom-style: solid;
+    	border-bottom-width:1px;
+    	border-bottom-color:red;
+    			}
+    	.dispositivo{text-align:center}
+		.descripcion{color:gray};
+</style>
+</head>
+<body>
+<h1 id="cab11" class="titular dispositivo">Introdución de dispositivo</h1>
+<h2 id="cab21" class="titular">Introduzca tipo de dispositivo y dirección MAC</h2>
+<p id="par1" class="descripcion">Si el dispositivo no es ninguno de los que aparece en la lista desplegable, seleccione otro y aparecerán otros dispositivos</p>
+<form name="formulDis" action="" method="post" onsubmit="validaFormulDis()">
+Dispositivos<select name="dis" id="dis">
+<option value="ord">ordenador</option>
+<option value="con">conmutador</option>
+<option value="otr" onclick="cambio()">otro</option>
+</select>
+<br>
+Direccion MAC<input id="mac" type="text" name="mac"  /> <br/>
+
+<input type="submit" name="enviar" value="Enviar" />
+<input type="reset" name="limpiar" value="Borrar" />
+<br>
+</form>
+
+
+<script>
+
+
+
+
+function borra_sel(identif_de_select) {
+	var nodoSelect=document.getElementById(identif_de_select);
+	while(nodoSelect.children.length>0)
+		nodoSelect.removeChild(nodoSelect.children[0]); //para borrarlos todos
+}
+
+function cambio(){
+	borra_sel("dis");
+	var xmlhttp;
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=function(){
+	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		txt = xmlhttp.responseText;// alert(txt);
+		datos=JSON.parse(xmlhttp.responseText);
+		var nodoSelect=document.getElementById("dis");
+		var nodoOpcion1=document.createElement("OPTION");
+		nodoOpcion1.setAttribute("pac", datos.pac);
+		var nodoOpcion2=document.createElement("OPTION");
+		nodoOpcion2.setAttribute("tab", datos.tab);
+		var nodoTexto1=document.createTextNode(datos.pac);  // crea un nodo de texto con el valor de datos[i][1]
+		var nodoTexto2=document.createTextNode(datos.tab);
+		nodoOpcion1.appendChild(nodoTexto1);                   // añade el nodo de texto al nodo elemento option
+		nodoSelect.appendChild(nodoOpcion1);
+		nodoOpcion2.appendChild(nodoTexto2);                   // añade el nodo de texto al nodo elemento option
+		nodoSelect.appendChild(nodoOpcion2);  
+		
+		
+	}
+		
+	}
+	xmlhttp.open("GET", "data/dispositivos.json", true);
+	xmlhttp.send();
+	
+	
+	
+};
+
+function rellena_sel(identif_de_select,datos) {
+	
+	var nodoSelect=document.getElementById(identif_de_select);
+	
+	var tam=datos.length;
+	for (var i=0; i<tam; i++){                               // para cada elemento de datos
+		var nodoOpcion=document.createElement("OPTION");     // crea un elemento con etiqueta option
+		nodoOpcion.setAttribute("value", datos[i][0]);       // le añade el atributo value con el valor de datos[i][0]
+		var nodoTexto=document.createTextNode(datos[i][1]);  // crea un nodo de texto con el valor de datos[i][1]
+		nodoOpcion.appendChild(nodoTexto);                   // añade el nodo de texto al nodo elemento option
+		nodoSelect.appendChild(nodoOpcion);                  // añade el nodo elemento option al nodo elemento select
+	}
+	return nodoSelect;
+}
+
+
+</script>
+</body>
+</html>
